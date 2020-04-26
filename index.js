@@ -5,33 +5,36 @@ const querystring = require('querystring');
 
 const mime = {
     'html': 'text/html',
-    'css': 'text/css',
-    'jpg': 'image/jpg',
     'ico': 'image/x-icon',
-    'mp3': 'audio/mpeg3',
-    'mp4': 'video/mp4'
 };
 
 const servidor = http.createServer((pedido, respuesta) => {
     const objetourl = url.parse(pedido.url);
     let camino = 'public' + objetourl.pathname;
-    if (camino == 'public/')
+    if (camino == 'public/'){
         camino = 'public/index.html';
-    encaminar(pedido, respuesta, camino);
+    }
+    Rutas(pedido, respuesta, camino);
 });
 
-servidor.listen(8888);
+servidor.listen(8888, () => {
+    console.log('Servidor web iniciado en port',8888);
+});
 
-function encaminar(pedido, respuesta, camino) {
+
+function Rutas(pedido, respuesta, camino) {
+    console.log("===============>", camino);
     switch (camino) {
+        // funciona como metodo POST
         case 'public/cargar':
             {
-                grabarUsuarios(pedido, respuesta);
+                postUsuarios(pedido, respuesta);
                 break;
             }
+        // funciona como metod GET
         case 'public/listaDeUsuarios':
             {
-                verUsuarios(respuesta);
+                getUsuarios(respuesta);
                 break;
             }
         default:
@@ -62,7 +65,7 @@ function encaminar(pedido, respuesta, camino) {
     }
 }
 
-function grabarUsuarios(pedido, respuesta) {
+function postUsuarios(pedido, respuesta) {
     let info = '';
     pedido.on('data', datosparciales => {
         info += datosparciales;
@@ -89,7 +92,7 @@ function grabarEnArchivo(formulario) {
     });
 }
 
-function verUsuarios(respuesta) {
+function getUsuarios(respuesta) {
     fs.readFile('public/registro_usuarios.txt', (error, datos) => {
         respuesta.writeHead(200, { 'Content-Type': 'text/html' });
         respuesta.write('<!doctype html><html><head></head><body>');
@@ -99,4 +102,3 @@ function verUsuarios(respuesta) {
     });
 }
 
-console.log('Servidor web iniciado');
