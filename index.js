@@ -10,11 +10,11 @@ const mime = {
 
 const servidor = http.createServer((pedido, respuesta) => {
     const objetourl = url.parse(pedido.url);
-    let camino = 'public' + objetourl.pathname;
-    if (camino == 'public/'){
-        camino = 'public/index.html';
+    let ruta = 'public' + objetourl.pathname;
+    if (ruta == 'public/'){
+        ruta = 'public/index.html';
     }
-    Rutas(pedido, respuesta, camino);
+    Rutas(pedido, respuesta, ruta);
 });
 
 servidor.listen(8888, () => {
@@ -22,9 +22,9 @@ servidor.listen(8888, () => {
 });
 
 
-function Rutas(pedido, respuesta, camino) {
-    console.log("===============>", camino);
-    switch (camino) {
+function Rutas(pedido, respuesta, ruta) {
+    console.log("===============>", ruta);
+    switch (ruta) {
         // funciona como metodo POST
         case 'public/cargar':
             {
@@ -39,15 +39,15 @@ function Rutas(pedido, respuesta, camino) {
             }
         default:
             {
-                fs.stat(camino, error => {
+                fs.stat(ruta, error => {
                     if (!error) {
-                        fs.readFile(camino, (error, contenido) => {
+                        fs.readFile(ruta, (error, contenido) => {
                             if (error) {
                                 respuesta.writeHead(500, { 'Content-Type': 'text/plain' });
                                 respuesta.write('Error interno');
                                 respuesta.end();
                             } else {
-                                const vec = camino.split('.');
+                                const vec = ruta.split('.');
                                 const extension = vec[vec.length - 1];
                                 const mimearchivo = mime[extension];
                                 respuesta.writeHead(200, { 'Content-Type': mimearchivo });
